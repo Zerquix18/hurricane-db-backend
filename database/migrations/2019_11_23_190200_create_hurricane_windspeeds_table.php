@@ -19,7 +19,7 @@ class CreateHurricaneWindspeedsTable extends Migration
             $table->integer('hurricane_id');
             $table->integer('position_id');
 
-            $table->integer('measurement');
+            $table->float('measurement');
 
             $table->dateTime('moment');
 
