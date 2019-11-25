@@ -24,6 +24,8 @@ class CreateHurricanePositionsTable extends Migration
             
             $table->string('direction');
 
+            $table->string('source')->nullable();
+
             $table->timestamps();
         });
     }

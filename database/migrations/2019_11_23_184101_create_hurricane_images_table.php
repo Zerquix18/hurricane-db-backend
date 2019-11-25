@@ -28,6 +28,8 @@ class CreateHurricaneImagesTable extends Migration
                 'misc'
             ]);
 
+            $table->string('source')->nullable();
+
             $table->timestamps();
         });
     }

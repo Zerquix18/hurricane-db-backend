@@ -23,6 +23,8 @@ class CreateHurricanePressuresTable extends Migration
 
             $table->dateTime('moment');
 
+            $table->string('source')->nullable();
+
             $table->timestamps();
         });
     }
