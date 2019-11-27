@@ -13,7 +13,9 @@ class CreateHurricanePositionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('hurricane_positions', function (Blueprint $table) {
+        // see: https://www.nhc.noaa.gov/data/hurdat/hurdat2-format-atlantic.pdf
+        $event_types = [ 'C', 'G', 'I', 'L', 'P', 'R', 'S', 'T', 'W'];
+        Schema::create('hurricane_positions', function (Blueprint $table) use ($event_types) {
             $table->bigIncrements('id');
 
             $table->integer('hurricane_id');
@@ -21,8 +23,8 @@ class CreateHurricanePositionsTable extends Migration
             $table->float('longitude', 10, 6);
             
             $table->dateTime('moment');
-            
-            $table->string('direction');
+
+            $table->enum('event_type', $event_types)->nullable();
 
             $table->string('source')->nullable();
 
