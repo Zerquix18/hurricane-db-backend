@@ -40,6 +40,7 @@ class CreateHurricanesTable extends Migration
 
             $table->string('sources');
 
+            $table->unique(['name', 'season']);
             $table->timestamps();
         });
     }
