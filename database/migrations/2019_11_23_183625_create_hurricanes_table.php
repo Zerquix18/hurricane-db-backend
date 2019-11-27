@@ -16,15 +16,14 @@ class CreateHurricanesTable extends Migration
         Schema::create('hurricanes', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->string('slug', 50);
 
             $table->enum('basin', [
-                'north_atlantic',
+                'atlantic',
                 'eatern_pacific',
                 'western_pacific',
-                'north_indian',
-                'australian_region',
                 'southern_pacific',
+                'indian',
+                'australian_region',
             ]);
             $table->integer('season');
 
