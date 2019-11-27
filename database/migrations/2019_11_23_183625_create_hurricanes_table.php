@@ -27,15 +27,11 @@ class CreateHurricanesTable extends Migration
             ]);
             $table->integer('season');
 
-            $table->integer('peak_intensity');
-            $table->integer('minimum_pressure');
-            $table->integer('minimum_temperature');
-
             $table->dateTime('formed');
             $table->dateTime('dissipated');
 
-            $table->string('casualties');
-            $table->string('damage');
+            $table->string('casualties')->nullable();
+            $table->string('damage')->nullable();
 
             $table->string('sources');
 
