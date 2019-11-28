@@ -16,6 +16,7 @@ class CreateHurricanesTable extends Migration
         Schema::create('hurricanes', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
+            $table->string('image_url')->nullable();
 
             $table->enum('basin', [
                 'atlantic',
@@ -30,8 +31,10 @@ class CreateHurricanesTable extends Migration
             $table->dateTime('formed');
             $table->dateTime('dissipated');
 
-            $table->string('casualties')->nullable();
-            $table->string('damage')->nullable();
+            $table->integer('min_range_casualties')->nullable();
+            $table->integer('max_range_casualties')->nullable();
+            $table->integer('min_range_damage')->nullable();
+            $table->integer('max_range_damage')->nullable();
 
             $table->string('sources');
 
