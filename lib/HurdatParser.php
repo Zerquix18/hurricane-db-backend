@@ -30,19 +30,28 @@ class HurdatParser
 
     while (($header_index + 1) < $lines_count) {
       $header = $lines[$header_index];
+      $metadata = $header[0];
       $hurricane_name = $header[1];
       $data_count = (int) $header[2];
 
       $hurricane_data = $lines->slice($header_index + 1, $data_count)->values();
-      $hurricanes[] = $this->handleHurricane($hurricane_name, $hurricane_data);
+      $hurricanes[] = $this->handleHurricane($metadata, $hurricane_name, $hurricane_data);
       $header_index += $data_count + 1;
     }
 
     return $hurricanes;
   }
 
-  private function handleHurricane(string $name, Collection $data): array
+  private function handleHurricane(string $metadata, string $name, Collection $data): array
   {
+    $basins = [
+      'AL' => 'atlantic',
+    ];
+
+    $basin = $basins[substr($metadata, 0, 2)];
+    $number = (int) substr($metadata, 2, 2);
+    $season = (int) substr($metadata, 4);
+
     $name = ucfirst(strtolower($name));
     $events = $data->map(function ($event) {
       $timestamp = $this->parseDateTime($event[0], $event[1]);
@@ -109,6 +118,9 @@ class HurdatParser
     
     return [
       'name' => $name,
+      'basin' => $basin,
+      'number' => $number,
+      'season' => $season,
       'events' => $events->toArray(),
     ];
   }

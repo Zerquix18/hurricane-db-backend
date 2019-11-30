@@ -12,4 +12,11 @@ class HurricanePosition extends Model
         'longitude' => 'float',
     ];
     protected $dates = ['moment'];
+    protected $fillable = [
+        'hurricane_id', 
+        'latitude', 
+        'longitude', 
+        'moment', 
+        'event_type', 
+    ];
 }

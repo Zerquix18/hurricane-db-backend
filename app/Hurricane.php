@@ -14,4 +14,16 @@ class Hurricane extends Model
         'minimum_temperature' => 'integer',
     ];
     protected $dates = ['formed', 'dissipated'];
+    protected $fillable = [
+        'name',
+        'basin',
+        'season',
+        'formed',
+        'dissipated',
+        'min_range_casualties',
+        'max_range_casualties',
+        'min_range_damage',
+        'max_range_damage',
+        'sources',
+    ];
 }
