@@ -14,3 +14,10 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/test', function() {
+    $hurricane = App\Hurricane::find(1435); // Harvey (2017)
+    $wikipedia = new Lib\WikipediaParser($hurricane);
+    $data = $wikipedia->getData();
+    dd($data);
+});
