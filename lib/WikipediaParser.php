@@ -39,8 +39,6 @@ class WikipediaParser
             $info_from_main_article = $this->getInfoFromMainArticle($info_from_season_page['main_article']);
         }
 
-        dd($info_from_main_article);
-
         return [];
     }
 
@@ -155,6 +153,7 @@ class WikipediaParser
      * max_range_fatalities: int;
      * min_range_damage: float;
      * max_range_damager: float;
+     * affected_areas: string[];
      * images: { url: string, description: string }[];
      * default_image: string;
      *
@@ -179,17 +178,19 @@ class WikipediaParser
 
         // first paragraph:
         $paragraphs = $domdocument->getElementsByTagName('p');
+        $first_paragraph = null;
         foreach ($paragraphs as $paragraph) {
             $first_paragraph = strip_tags($paragraph->ownerDocument->saveHTML($paragraph));
             break;
         }
 
-        // fatalities, damage
+        // fatalities, damage, affected areas
         $min_range_fatalities = null;
         $max_range_fatalities = null;
         $min_range_damage = null;
         $max_range_damage = null;
-        
+        $affected_areas = [];
+
         $domxpath = new \DOMXPath($domdocument);
         $table_lookup = $domxpath->query("//*[contains(@class, 'infobox')]");
         if ($table_lookup->length > 0) {
@@ -203,6 +204,13 @@ class WikipediaParser
                 }
                 if ($th->textContent === "Damage") {
                     $damage_string = $td->textContent;
+                }
+                if ($th->textContent === "Areas affected") {
+                    foreach ($td->childNodes as $node) {
+                        if ($node->nodeName === "a") {
+                            $affected_areas[] = $node->textContent;
+                        }
+                    }
                 }
             }
         }
@@ -242,9 +250,19 @@ class WikipediaParser
             $default_image = $src;
         }
 
-        // images
+        // images - todo
         $images = [];
 
+        return [
+            'first_paragraph' => $first_paragraph,
+            'min_range_fatalities' => $min_range_fatalities,
+            'max_range_fatalities' => $max_range_fatalities,
+            'min_range_damage' => $min_range_damage,
+            'max_range_damage' => $max_range_damage,
+            'affected_areas' => $affected_areas,
+            'default_image' => $default_image,
+            'images' => $images,
+        ];
     }
 
     private function parseFatalitiesString(string $fatalities_string): ?array
