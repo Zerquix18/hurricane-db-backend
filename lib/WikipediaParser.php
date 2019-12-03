@@ -37,9 +37,20 @@ class WikipediaParser
         $info_from_main_article = [];
         if (key_exists('main_article', $info_from_season_page)) {
             $info_from_main_article = $this->getInfoFromMainArticle($info_from_season_page['main_article']);
+            return $info_from_main_article;
+        } else {
+            return [
+                'first_paragraph' => $info_from_season_page['main_paragraph'],
+                'first_paragraph_source' => $info_from_season_page['main_paragraph_source'],
+                'min_range_fatalities' => null,
+                'max_range_fatalities' =>null,
+                'min_range_damage' => null,
+                'max_range_damage' => null,
+                'affected_areas' => null,
+                'default_image' => count($info_from_season_page['images']) > 0 ? $info_from_season_page['images'][0] : null,
+                'images' => '', // todo
+            ];
         }
-
-        return [];
     }
 
     /**
@@ -253,8 +264,11 @@ class WikipediaParser
         // images - todo
         $images = [];
 
+        $first_paragraph_source = sprintf("https://en.wikipedia.org/wiki/%s", $main_article);
+
         return [
             'first_paragraph' => $first_paragraph,
+            'first_paragraph_source' => $first_paragraph_source,
             'min_range_fatalities' => $min_range_fatalities,
             'max_range_fatalities' => $max_range_fatalities,
             'min_range_damage' => $min_range_damage,
