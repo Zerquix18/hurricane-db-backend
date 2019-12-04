@@ -97,6 +97,17 @@ class HurricaneController extends Controller
 
     public function getHurricane(string $basin, string $season, string $hurricane, Request $request)
     {
-        return ['success' => true];
+        $system = Hurricane::where([
+            'basin' => $basin,
+            'season' => $season,
+            'name' => $hurricane,
+        ])->with(['positions', 'pressures', 'windSpeeds'])
+          ->get();
+
+        if (! $system) {
+            abort(404);
+        }
+
+        return $system;
     }
 }
