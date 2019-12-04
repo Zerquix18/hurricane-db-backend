@@ -3,6 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\HurricanePosition;
+use App\HurricanePressure;
+use App\WindSpeed;
 
 class Hurricane extends Model
 {
@@ -26,4 +29,17 @@ class Hurricane extends Model
         'max_range_damage',
         'sources',
     ];
+
+    public function positions()
+    {
+        return $this->hasMany('App\HurricanePosition');
+    }
+    public function pressures()
+    {
+        return $this->hasMany('App\HurricanePressure');
+    }
+    public function windSpeeds()
+    {
+        return $this->hasMany('App\HurricaneWindSpeed');
+    }
 }
