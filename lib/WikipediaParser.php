@@ -35,7 +35,7 @@ class WikipediaParser
         }
 
         $info_from_main_article = [];
-        if (key_exists('main_article', $info_from_season_page)) {
+        if ($info_from_season_page['main_article']) {
             $info_from_main_article = $this->getInfoFromMainArticle($info_from_season_page['main_article']);
             return $info_from_main_article;
         } else {
@@ -46,7 +46,7 @@ class WikipediaParser
                 'max_range_fatalities' =>null,
                 'min_range_damage' => null,
                 'max_range_damage' => null,
-                'affected_areas' => null,
+                'affected_areas' => [],
                 'default_image' => count($info_from_season_page['images']) > 0 ? $info_from_season_page['images'][0] : null,
                 'images' => '', // todo
             ];
@@ -98,9 +98,14 @@ class WikipediaParser
 
         $html = $section_content['text'];
 
+        if (trim($html) === '') {
+            // sometimes they don't exist, like Hurricane One in 1853 https://en.wikipedia.org/wiki/1853_Atlantic_hurricane_season
+            return null;
+        }
+
         $domdocument = new \DOMDocument();
         libxml_use_internal_errors(true); // :( :@
-        $domdocument->loadHTML($html);
+        $domdocument->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
 
         $images = [];
         $main_paragraph = null;
@@ -138,9 +143,12 @@ class WikipediaParser
         $elem = $domxpath->query("//*[contains(@class, 'navigation-not-searchable')]");
         if ($elem->length > 0) {
             $elem = $elem->item(0);
-            $anchor = $elem->childNodes[1];
-            $href = $anchor->getAttribute('href');
-            $main_article = str_replace('/wiki/', '', $href); // :D
+            $title = $elem->childNodes[0]->textContent;
+            if (stripos($title, 'Main') !== false) {
+                $anchor = $elem->childNodes[1];
+                $href = $anchor->getAttribute('href');
+                $main_article = str_replace('/wiki/', '', $href); // :D
+            }
         }
 
 
@@ -175,7 +183,15 @@ class WikipediaParser
             "https://en.wikipedia.org/api/rest_v1/page/mobile-sections/%s",
             $main_article
         );
-        $json = file_get_contents($wikipedia_url);
+
+        // file_get_contents fails following redirects
+
+        $ch = curl_init($wikipedia_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $json = curl_exec($ch);
+        curl_close($ch);
+
         if (! $json) {
             return null; // :(
         }
