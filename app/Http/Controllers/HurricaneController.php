@@ -20,6 +20,10 @@ class HurricaneController extends Controller
         ])->with(['positions', 'pressures', 'windSpeeds'])
           ->get();
 
+        if ($systems->count() === 0) {
+            abort(404);
+        }
+
         // ------------------ BOUNDARIES
         $first_system_formed_on = $systems->first()->positions->first()->moment;
         $last_system_dissipated_on = $systems->last()->positions->last()->moment;
