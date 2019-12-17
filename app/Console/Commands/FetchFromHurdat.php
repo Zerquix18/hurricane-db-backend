@@ -71,8 +71,8 @@ class FetchFromHurdat extends Command
         $formed->setTimestamp($hurricane_data['events'][0]['timestamp']);
         $dissipated->setTimestamp($hurricane_data['events'][count($hurricane_data['events']) - 1]['timestamp']);
         
-        $min_range_casualties = null;
-        $max_range_casualties = null;
+        $min_range_fatalities = null;
+        $max_range_fatalities = null;
         $min_range_damage = null;
         $max_range_damage = null;
 
@@ -86,8 +86,8 @@ class FetchFromHurdat extends Command
                 'season' => $season,
                 'formed' => $formed,
                 'dissipated' => $dissipated,
-                'min_range_casualties' => $min_range_casualties,
-                'max_range_casualties' => $max_range_casualties,
+                'min_range_fatalities' => $min_range_fatalities,
+                'max_range_fatalities' => $max_range_fatalities,
                 'min_range_damage' => $min_range_damage,
                 'max_range_damage' => $max_range_damage,
                 'sources' => $sources,
