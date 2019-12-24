@@ -29,3 +29,7 @@ Route::get('/basin/{basin}/season/{season}/hurricane/{hurricane}', 'HurricaneCon
     'season' => '[0-9]+',
     'hurricane' => '[a-z]+',
 ]);
+
+Route::get('/test', function () {
+    dump(Lib\HurricaneRecord::topByLargestPath(10));
+});
