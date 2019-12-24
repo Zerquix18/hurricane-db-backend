@@ -49,9 +49,14 @@ class FetchFromHurdat extends Command
         $this->info('Fetching...');
         $data = $analysis->getData();
 
+        $this->output->progressStart(count($data));
+
         foreach ($data as $hurricane) {
             $this->handleHurricane($hurricane);
+            $this->output->progressAdvance();
         }
+
+        $this->output->progressFinish();
     }
 
     private function handleHurricane(array $hurricane_data): void
@@ -60,10 +65,11 @@ class FetchFromHurdat extends Command
         if ($name === 'Unnamed') {
             $name = $this->translateName($hurricane_data['number']);
         }
-        $this->info("Inserting {$name}...");
 
         $basin = $hurricane_data['basin'];
         $season = $hurricane_data['season'];
+
+        $this->info("Inserting {$name} ({$season})...");
         
         $formed = new \DateTime();
         $dissipated = new \DateTime();
@@ -98,8 +104,9 @@ class FetchFromHurdat extends Command
             $moment = new \DateTime();
             $moment->setTimestamp($event['timestamp']);
 
-            $position = HurricanePosition::firstOrCreate(
-                ['hurricane_id' => $hurricane->id, 'moment' => $moment],
+            HurricanePosition::where(['hurricane_id' => $hurricane->id])->delete();
+
+            $position = HurricanePosition::create(
                 [
                     'hurricane_id' => $hurricane->id,
                     'latitude' => $event['latitude'],
@@ -110,8 +117,8 @@ class FetchFromHurdat extends Command
             );
 
             if ($event['wind_speed']) {
-                $windspeed = HurricaneWindSpeed::firstOrCreate(
-                    ['hurricane_id' => $hurricane->id, 'moment' => $moment],
+                HurricaneWindSpeed::where(['hurricane_id' => $hurricane->id])->delete();
+                $windspeed = HurricaneWindSpeed::create(
                     [
                     'hurricane_id' => $hurricane->id,
                     'position_id' => $position->id,
@@ -122,8 +129,8 @@ class FetchFromHurdat extends Command
             }
 
             if ($event['pressure']) {
-                $pressure = HurricanePressure::firstOrCreate(
-                    ['hurricane_id' => $hurricane->id, 'moment' => $moment],
+                HurricanePressure::where(['hurricane_id' => $hurricane->id])->delete();
+                $pressure = HurricanePressure::create(
                     [
                         'hurricane_id' => $hurricane->id,
                         'position_id' => $position->id,
