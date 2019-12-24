@@ -100,11 +100,13 @@ class FetchFromHurdat extends Command
             ]
         );
 
+        HurricanePosition::where(['hurricane_id' => $hurricane->id])->delete();
+        HurricanePressure::where(['hurricane_id' => $hurricane->id])->delete();
+        HurricaneWindSpeed::where(['hurricane_id' => $hurricane->id])->delete();
+
         foreach ($hurricane_data['events'] as $event) {
             $moment = new \DateTime();
             $moment->setTimestamp($event['timestamp']);
-
-            HurricanePosition::where(['hurricane_id' => $hurricane->id])->delete();
 
             $position = HurricanePosition::create(
                 [
@@ -117,7 +119,6 @@ class FetchFromHurdat extends Command
             );
 
             if ($event['wind_speed']) {
-                HurricaneWindSpeed::where(['hurricane_id' => $hurricane->id])->delete();
                 $windspeed = HurricaneWindSpeed::create(
                     [
                     'hurricane_id' => $hurricane->id,
@@ -129,7 +130,6 @@ class FetchFromHurdat extends Command
             }
 
             if ($event['pressure']) {
-                HurricanePressure::where(['hurricane_id' => $hurricane->id])->delete();
                 $pressure = HurricanePressure::create(
                     [
                         'hurricane_id' => $hurricane->id,
