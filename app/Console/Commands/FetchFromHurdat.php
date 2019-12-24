@@ -165,6 +165,12 @@ class FetchFromHurdat extends Command
             'Nineteen',
             'Twenty',
             'Twenty One',
+            'Twenty Two',
+            'Twenty Three',
+            'Twenty Four',
+            'Twenty Five',
+            'Twenty Six',
+            'Twenty Seven',
         ];
 
         $number--;
