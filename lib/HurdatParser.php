@@ -57,6 +57,9 @@ class HurdatParser
       $timestamp = $this->parseDateTime($event[0], $event[1]);
       $event_type = $event[2];
       $classification = $event[3];
+      if ($classification === 'ET') {
+        $classification = 'EX'; // harvey 1993 has a typo?
+      }
 
       $latitude = $this->translateCoordinate($event[4]);
       $longitude = $this->translateCoordinate($event[5]);

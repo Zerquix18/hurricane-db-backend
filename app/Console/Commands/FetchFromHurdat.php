@@ -115,6 +115,7 @@ class FetchFromHurdat extends Command
                     'longitude' => $event['longitude'],
                     'moment' => $moment,
                     'event_type' => $event['event_type'] ? $event['event_type'] : null,
+                    'classification' => $event['classification'],
                 ]
             );
 

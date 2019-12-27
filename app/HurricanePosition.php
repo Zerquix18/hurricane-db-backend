@@ -13,7 +13,8 @@ class HurricanePosition extends Model
     ];
     protected $dates = ['moment'];
     protected $fillable = [
-        'hurricane_id', 
+        'hurricane_id',
+        'classification',
         'latitude', 
         'longitude', 
         'moment', 
