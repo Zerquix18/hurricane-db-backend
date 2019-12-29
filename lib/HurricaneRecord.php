@@ -10,6 +10,8 @@
 
 namespace Lib;
 
+// this file is a mess i better clean it up
+
 use Illuminate\Support\Facades\DB;
 
 class HurricaneRecord
@@ -63,6 +65,34 @@ class HurricaneRecord
            ->orderBy('max_range_damage', 'DESC')
            ->limit($limit)
            ->get();
+  }
+
+  public static function topByMonth(int $limit = 10)
+  {
+    $hurricanes = DB::table('hurricanes')
+                  ->selectRaw('hurricanes.*, MAX(hurricane_windspeeds.measurement) AS max_speed')
+                  ->join('hurricane_windspeeds', 'hurricane_windspeeds.hurricane_id', '=', 'hurricanes.id')
+                  ->groupBy('hurricanes.id')
+                  ->get()
+                  ->reduce(function ($accumulator, $hurricane) {
+                    $month_index = date('n', strtotime($hurricane->formed)) - 1;
+                    if (! $accumulator->has($month_index)) {
+                      $accumulator->put($month_index, []);
+                    }
+                    $month = $accumulator->get($month_index);
+                    $month[] = $hurricane;
+                    $accumulator->put($month_index, $month);
+                    return $accumulator;
+                  }, collect([]))
+                  ->map(function ($hurricanes) { // by month
+                    usort($hurricanes, function ($a, $b) {
+                      return $b->max_speed <=> $a->max_speed;
+                    });
+                    return $hurricanes[0];
+                  })
+                  ->sortKeys();
+
+    return $hurricanes;
   }
 
   /********************************** FASTEST...   ****************************/

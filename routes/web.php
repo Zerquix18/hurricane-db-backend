@@ -31,5 +31,5 @@ Route::get('/basin/{basin}/season/{season}/hurricane/{hurricane}', 'HurricaneCon
 ]);
 
 Route::get('/test', function () {
-    dump(Lib\HurricaneRecord::formationDateByCategory());
+    dump(Lib\HurricaneRecord::topByMonth());
 });
