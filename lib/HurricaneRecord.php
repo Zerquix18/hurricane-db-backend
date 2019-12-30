@@ -107,6 +107,76 @@ class HurricaneRecord
 
   /********************************** FASTEST...   ****************************/
 
+  public static function fastestMovementAcrossLand()
+  {
+    $hurricanes = DB::table('hurricanes')->get();
+    $hurricanes_and_speed = []; // [{ hurricane, speed }]
+
+    $haversineGreatCircleDistance = function(
+      $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371000)
+    {
+      $latFrom = deg2rad($latitudeFrom);
+      $lonFrom = deg2rad($longitudeFrom);
+      $latTo = deg2rad($latitudeTo);
+      $lonTo = deg2rad($longitudeTo);
+    
+      $lonDelta = $lonTo - $lonFrom;
+      $a = pow(cos($latTo) * sin($lonDelta), 2) +
+        pow(cos($latFrom) * sin($latTo) - sin($latFrom) * cos($latTo) * cos($lonDelta), 2);
+      $b = sin($latFrom) * sin($latTo) + cos($latFrom) * cos($latTo) * cos($lonDelta);
+    
+      $angle = atan2(sqrt($a), $b);
+      return $angle * $earthRadius;
+    };
+
+    foreach ($hurricanes as $hurricane) {
+      $positions = DB::table('hurricane_positions')->where('hurricane_id', '=', $hurricane->id)->get()->toArray();
+
+      usort($positions, function ($a, $b) {
+        return strtotime($a->moment) <=> strtotime($b->moment);
+      });
+
+      $positions_count = count($positions);
+      if ($positions_count < 2) {
+        continue;
+      }
+      $total_distance = 0;
+
+      for ($i = 1; $i < $positions_count; $i++) {
+        $latitude_from = $positions[$i - 1]->latitude;
+        $longitude_from = $positions[$i - 1]->longitude;
+        $latitude_to = $positions[$i]->latitude;
+        $longitude_to = $positions[$i]->longitude;
+        
+        $distance = $haversineGreatCircleDistance(
+          $latitude_from,
+          $longitude_from,
+          $latitude_to,
+          $longitude_to
+        );
+
+        $total_distance += $distance;
+      }
+
+
+      $total_time = abs(strtotime($positions[$positions_count - 1]->moment) - strtotime($positions[0]->moment));
+
+      $speed = $total_distance / $total_time;
+
+      $hurricanes_and_speed[] = [
+        'hurricane' => $hurricane,
+        'speed' => $speed,
+        'total_distance' => $total_distance,
+        'total_time' => $total_time,
+      ];
+    }
+
+    usort($hurricanes_and_speed, function ($a, $b) {
+      return $b['speed'] <=> $a['speed'];
+    });
+
+    return array_splice($hurricanes_and_speed, 0, 10);
+  }
 
   /********************************* LARGEST...  *****************************/
 
