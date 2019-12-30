@@ -298,7 +298,7 @@ class WikipediaParser
     private function parseFatalitiesString(string $fatalities_string): ?array
     {
         // eg: "3,059 total"
-        $regex1 = preg_match('/^([\d\,]+) total/', $fatalities_string, $matches);
+        $regex1 = preg_match('/([\d\,]+) total/', $fatalities_string, $matches);
         if ($matches) {
             $fatalities = (int) str_replace(',', '', $matches[1]);
             return [
