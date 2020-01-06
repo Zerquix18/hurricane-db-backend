@@ -107,7 +107,7 @@ class HurricaneRecord
 
   /********************************** FASTEST...   ****************************/
 
-  public static function fastestMovementAcrossLand()
+  public static function fastestMovement()
   {
     $hurricanes = DB::table('hurricanes')->get();
     $hurricanes_and_speed = []; // [{ hurricane, speed }]

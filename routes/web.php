@@ -29,3 +29,17 @@ Route::get('/basin/{basin}/season/{season}/hurricane/{hurricane}', 'HurricaneCon
     'season' => '[0-9]+',
     'hurricane' => '[a-z]+',
 ]);
+
+Route::prefix('ranking')->group(function () {
+    Route::get('top_by_lowest_pressure', 'RankingController@topByLowestPressure');
+    Route::get('top_by_highest_windspeed', 'RankingController@topByHighestWindSpeed');
+    Route::get('top_by_fatalities', 'RankingController@topByFatalities');
+    Route::get('top_by_damage', 'RankingController@topByFatalities');
+    Route::get('top_by_month', 'RankingController@topByMonth');
+    Route::get('top_by_season', 'RankingController@topByMonth');
+    Route::get('top_by_fastest_movement', 'RankingController@fastestMovement');
+    Route::get('top_by_largest_path', 'RankingController@topByLargestPath');
+    Route::get('top_by_landfalls', 'RankingController@topByLandfalls');
+    Route::get('earlier_formation_by_category', 'RankingController@earlierFormationByCategory');
+    Route::get('latest_formation_by_category', 'RankingController@latestFormationByCategory');
+});
