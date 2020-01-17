@@ -43,3 +43,5 @@ Route::prefix('ranking')->group(function () {
     Route::get('earlier_formation_by_category', 'RankingController@earlierFormationByCategory');
     Route::get('latest_formation_by_category', 'RankingController@latestFormationByCategory');
 });
+
+Route::get('search', 'SearchController');
