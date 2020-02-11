@@ -30,6 +30,10 @@ Route::get('/basin/{basin}/season/{season}/hurricane/{hurricane}', 'HurricaneCon
     'hurricane' => '[a-z]+',
 ]);
 
+Route::get('/positions/{id}', 'HurricaneController@getPositions');
+Route::get('/wind_speeds/{id}', 'HurricaneController@getWindspeeds');
+Route::get('/pressures/{id}', 'HurricaneController@getPressures');
+
 Route::prefix('ranking')->group(function () {
     Route::get('top_by_lowest_pressure', 'RankingController@topByLowestPressure');
     Route::get('top_by_highest_windspeed', 'RankingController@topByHighestWindSpeed');

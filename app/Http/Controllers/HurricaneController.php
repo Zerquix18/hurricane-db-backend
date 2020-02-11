@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Hurricane;
 
+use App\HurricanePosition;
+use App\HurricaneWindSpeed;
+use App\HurricanePressure;
+
 class HurricaneController extends Controller
 {
     public function getBasin(string $basin, Request $request)
@@ -112,5 +116,26 @@ class HurricaneController extends Controller
         }
 
         return $system;
+    }
+
+    public function getPositions(string $id)
+    {
+        $positions = HurricanePosition::where('hurricane_id', $id)->get();
+
+        return $positions;
+    }
+
+    public function getWindspeeds(string $id)
+    {
+        $wind_speeds = HurricaneWindSpeed::where('hurricane_id', $id)->get();
+
+        return $wind_speeds;
+    }
+
+    public function getPressures(string $id)
+    {
+        $pressures = HurricanePressure::where('hurricane_id', $id)->get();
+
+        return $pressures;
     }
 }
