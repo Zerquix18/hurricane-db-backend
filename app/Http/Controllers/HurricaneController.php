@@ -105,8 +105,7 @@ class HurricaneController extends Controller
             'basin' => $basin,
             'season' => $season,
             'name' => $hurricane,
-        ])->with(['positions', 'pressures', 'windSpeeds'])
-          ->get();
+        ])->first();
 
         if (! $system) {
             abort(404);
