@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\HurricanePosition;
 use App\HurricanePressure;
-use App\WindSpeed;
+use App\HurricaneWindSpeed;
 
 class Hurricane extends Model
 {

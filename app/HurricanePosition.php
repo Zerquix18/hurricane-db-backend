@@ -20,4 +20,13 @@ class HurricanePosition extends Model
         'moment', 
         'event_type', 
     ];
+
+    public function pressures()
+    {
+        return $this->hasMany('App\HurricanePressure', 'position_id');
+    }
+    public function windSpeeds()
+    {
+        return $this->hasMany('App\HurricaneWindSpeed', 'position_id');
+    }
 }
