@@ -84,7 +84,33 @@ class HurricaneController extends Controller
             }
         }
 
-        // first formed system
+        $systems = $systems->map(function ($system) {
+            $system->positions = $system->positions->map(function ($position) {
+                unset($position['hurricane_id']);
+                unset($position['created_at']);
+                unset($position['updated_at']);
+                unset($position['source']);
+    
+                if ($position->windSpeeds) {
+                    $position->wind_speed = $position->windSpeeds[0]->measurement;
+                } else {
+                    $position->wind_speed = null;
+                }
+                unset($position->windSpeeds);
+    
+                if ($position->pressures) {
+                    $position->pressure = $position->pressures[0]->measurement;
+                } else {
+                    $position->pressure = null;
+                }
+                unset($position->pressures);
+    
+                return $position;
+            });
+
+            return $system;
+        });
+
         return [
             'boundaries' => [
                 'first_system_formed_on' => $first_system_formed_on,
