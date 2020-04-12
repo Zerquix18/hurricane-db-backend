@@ -112,6 +112,8 @@ class HurricaneController extends Controller
         });
 
         return [
+            'basin' => $basin,
+            'year' => (int) $season,
             'boundaries' => [
                 'first_system_formed_on' => $first_system_formed_on,
                 'last_system_dissipated_on' => $last_system_dissipated_on,
