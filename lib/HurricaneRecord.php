@@ -95,7 +95,7 @@ class HurricaneRecord
     return $hurricanes;
   }
 
-  public static function topSortBySeason($sort = 'desc', $limit = 10)
+  public static function topBySeason($sort = 'desc', $limit = 10)
   {
     return DB::table('hurricanes')
            ->selectRaw('season, COUNT(*) AS total')

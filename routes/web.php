@@ -40,7 +40,7 @@ Route::prefix('ranking')->group(function () {
     Route::get('top_by_fatalities', 'RankingController@topByFatalities');
     Route::get('top_by_damage', 'RankingController@topByFatalities');
     Route::get('top_by_month', 'RankingController@topByMonth');
-    Route::get('top_by_season', 'RankingController@topByMonth');
+    Route::get('top_by_season', 'RankingController@topBySeason');
     Route::get('top_by_fastest_movement', 'RankingController@fastestMovement');
     Route::get('top_by_largest_path', 'RankingController@topByLargestPath');
     Route::get('top_by_landfalls', 'RankingController@topByLandfalls');
