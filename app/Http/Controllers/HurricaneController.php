@@ -153,14 +153,14 @@ class HurricaneController extends Controller
             unset($position['updated_at']);
             unset($position['source']);
 
-            if ($position->windSpeeds) {
+            if ($position->windSpeeds->count() > 0) {
                 $position->wind_speed = $position->windSpeeds[0]->measurement;
             } else {
                 $position->wind_speed = null;
             }
             unset($position->windSpeeds);
 
-            if ($position->pressures) {
+            if ($position->pressures->count() > 0) {
                 $position->pressure = $position->pressures[0]->measurement;
             } else {
                 $position->pressure = null;
