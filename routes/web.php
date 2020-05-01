@@ -44,7 +44,7 @@ Route::prefix('ranking')->group(function () {
     Route::get('top_by_fastest_movement', 'RankingController@fastestMovement');
     Route::get('top_by_largest_path', 'RankingController@topByLargestPath');
     Route::get('top_by_landfalls', 'RankingController@topByLandfalls');
-    Route::get('earlier_formation_by_category', 'RankingController@earlierFormationByCategory');
+    Route::get('earliest_formation_by_category', 'RankingController@earlierFormationByCategory');
     Route::get('latest_formation_by_category', 'RankingController@latestFormationByCategory');
 });
 
