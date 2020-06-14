@@ -122,7 +122,7 @@ class HurricaneController extends Controller
             'statistics' => [
                 'total_systems' => $total_systems,
                 'total_storms' => $total_storms,
-                'total_huriccanes' => $total_huriccanes,
+                'total_hurricanes' => $total_huriccanes,
                 'total_major_hurricanes' => $total_major_hurricanes,
                 'total_damage' => $total_damage,
                 'total_fatalities' => $total_fatalities,
