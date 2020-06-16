@@ -18,7 +18,7 @@ class AddRankingFields extends Migration
             $table->float('highest_pressure')->nullable();
             $table->float('lowest_windspeed')->nullable();
             $table->float('highest_windspeed')->nullable();
-            $table->float('distance_traveled')->nullable();
+            $table->double('distance_traveled')->nullable();
             $table->float('ace')->nullable();
         });
     }
