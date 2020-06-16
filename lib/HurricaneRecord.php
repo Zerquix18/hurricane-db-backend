@@ -1,10 +1,7 @@
 <?php
 /**
- * To get the various records. These SHOULD be cached as they change very slowly.
- * Some of them will be done via simple SQL queries and some will be too much for a noob like me,
- * so they'd be a run through all hurricanes.
- * 
- * Later on these records can be customized by date/time and location.
+ * Refactor on June 15, 2020
+ * Basically it's going to computer everything and then we store it in the database
  * 
  */
 
@@ -290,7 +287,7 @@ class HurricaneRecord
 
       $category_1 = $wind_speeds->first(function ($wp) {
         return $wp->measurement > 64 && 82 > $wp->measurement && $wp->classification === 'HU';
-      });
+      });            
 
       if ($category_1) {
         $categories[] = ['category' => 'category_1', 'at' => $category_1->moment];

@@ -118,12 +118,29 @@ class HurdatParser
         'wind_radii_64kt_nw_quadrant' => $wind_radii_64kt_nw_quadrant,
       ];
     });
-    
+
+    $lowest_pressure = $events->pluck('pressure')->min();
+    $highest_pressure = $events->pluck('pressure')->max();
+
+    $lowest_windspeed = $events->pluck('wind_speed')->min();
+    $highest_windspeed = $events->pluck('wind_speed')->max();
+
+    $distance_traveled = $this->getDistanceTraveled($events);
+    $speed = $this->getSpeedFromStartToEnd($distance_traveled, $events);
+    $ace = $this->getAce($events);
+
     return [
       'name' => $name,
       'basin' => $basin,
       'number' => $number,
       'season' => $season,
+      'lowest_pressure' => $lowest_pressure,
+      'highest_pressure' => $highest_pressure,
+      'lowest_windspeed' => $lowest_windspeed,
+      'highest_windspeed' => $highest_windspeed,
+      'distance_traveled' => $distance_traveled,
+      'speed' => $speed,
+      'ace' => $ace,
       'events' => $events->toArray(),
     ];
   }
@@ -154,5 +171,85 @@ class HurdatParser
     }
 
     return $value;
+  }
+
+  private function getDistanceTraveled(Collection $positions): float
+  {
+    $haversineGreatCircleDistance = function(
+      $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371000)
+    {
+      $latFrom = deg2rad($latitudeFrom);
+      $lonFrom = deg2rad($longitudeFrom);
+      $latTo = deg2rad($latitudeTo);
+      $lonTo = deg2rad($longitudeTo);
+    
+      $lonDelta = $lonTo - $lonFrom;
+      $a = pow(cos($latTo) * sin($lonDelta), 2) +
+        pow(cos($latFrom) * sin($latTo) - sin($latFrom) * cos($latTo) * cos($lonDelta), 2);
+      $b = sin($latFrom) * sin($latTo) + cos($latFrom) * cos($latTo) * cos($lonDelta);
+    
+      $angle = atan2(sqrt($a), $b);
+      return $angle * $earthRadius;
+    };
+
+    $positions = $positions->toArray();
+
+    $positions_count = count($positions);
+    if ($positions_count < 2) {
+      return 0;
+    }
+
+    $speeds = [];
+    $total_distance = 0;
+
+    for ($i = 1; $i < $positions_count; $i++) {
+      $latitude_from = $positions[$i - 1]['latitude'];
+      $longitude_from = $positions[$i - 1]['longitude'];
+      $latitude_to = $positions[$i]['latitude'];
+      $longitude_to = $positions[$i]['longitude'];
+      
+      $distance = $haversineGreatCircleDistance(
+        $latitude_from,
+        $longitude_from,
+        $latitude_to,
+        $longitude_to
+      );
+
+      $total_distance += $distance;
+    }
+
+    return $total_distance;
+  }
+
+  private function getSpeedFromStartToEnd(float $total_distance, Collection $positions): float
+  {
+    $positions = $positions->toArray();
+    // this looks so javascript
+    $positions_count = count($positions);
+    if ($positions_count < 2) {
+      return 0;
+    }
+    $total_time = $positions[$positions_count - 1]['timestamp'] - $positions[0]['timestamp'];
+    $speed = $total_distance / $total_time;
+
+    return $speed;
+  }
+
+  private function getAce(Collection $positions): float
+  {
+    $ace = $positions->filter(function ($position) {
+      if (! $position['wind_speed']) {
+        return false;
+      }
+
+      $valid_hours = collect([0, 6, 12, 18]);
+      $hour = (int) date('G', $position['timestamp']);
+      return $valid_hours->has($hour);
+    })->reduce(function ($ace, $current) {
+      $wind_speed = $current['wind_speed'] ** 2;
+      return $ace + $wind_speed;
+    }, 0) / 10e3;
+
+    return $ace;
   }
 }

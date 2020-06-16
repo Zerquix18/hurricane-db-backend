@@ -26,6 +26,9 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+
+        $schedule->command('fetch_from_hurdat')
+                 ->monthly();
     }
 
     /**
