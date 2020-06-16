@@ -15,6 +15,13 @@ class Hurricane extends Model
         'peak_intensity' => 'integer',
         'minimum_pressure' => 'integer',
         'minimum_temperature' => 'integer',
+        'lowest_pressure' => 'float',
+        'highest_pressure' => 'float',
+        'lowest_windspeed' => 'float',
+        'highest_windspeed' => 'float',
+        'distance_traveled' => 'float',
+        'speed' => 'float',
+        'ace' => 'float',
     ];
     protected $dates = ['formed', 'dissipated'];
     protected $fillable = [
@@ -28,6 +35,13 @@ class Hurricane extends Model
         'min_range_damage',
         'max_range_damage',
         'sources',
+        'lowest_pressure',
+        'highest_pressure',
+        'lowest_windspeed',
+        'highest_windspeed',
+        'distance_traveled',
+        'speed',
+        'ace',
     ];
 
     public function positions()

@@ -89,10 +89,9 @@ class FetchFromHurdat extends Command
         $lowest_windspeed = $hurricane_data['lowest_windspeed'];
         $highest_windspeed = $hurricane_data['highest_windspeed'];
         $distance_traveled = $hurricane_data['distance_traveled'];
-        $speed = $hurricane_data['speed'];
         $ace = $hurricane_data['ace'];
 
-        $hurricane = Hurricane::firstOrCreate(
+        $hurricane = Hurricane::updateOrCreate(
             [
                 'name' => $name,
                 'basin' => $basin,
@@ -115,7 +114,6 @@ class FetchFromHurdat extends Command
                 'lowest_windspeed' => $lowest_windspeed,
                 'highest_windspeed' => $highest_windspeed,
                 'distance_traveled' => $distance_traveled,
-                'speed' => $speed,
                 'ace' => $ace,
             ]
         );

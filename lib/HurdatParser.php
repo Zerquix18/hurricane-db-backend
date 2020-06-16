@@ -126,7 +126,6 @@ class HurdatParser
     $highest_windspeed = $events->pluck('wind_speed')->max();
 
     $distance_traveled = $this->getDistanceTraveled($events);
-    $speed = $this->getSpeedFromStartToEnd($distance_traveled, $events);
     $ace = $this->getAce($events);
 
     return [
@@ -139,7 +138,6 @@ class HurdatParser
       'lowest_windspeed' => $lowest_windspeed,
       'highest_windspeed' => $highest_windspeed,
       'distance_traveled' => $distance_traveled,
-      'speed' => $speed,
       'ace' => $ace,
       'events' => $events->toArray(),
     ];
@@ -219,20 +217,6 @@ class HurdatParser
     }
 
     return $total_distance;
-  }
-
-  private function getSpeedFromStartToEnd(float $total_distance, Collection $positions): float
-  {
-    $positions = $positions->toArray();
-    // this looks so javascript
-    $positions_count = count($positions);
-    if ($positions_count < 2) {
-      return 0;
-    }
-    $total_time = $positions[$positions_count - 1]['timestamp'] - $positions[0]['timestamp'];
-    $speed = $total_distance / $total_time;
-
-    return $speed;
   }
 
   private function getAce(Collection $positions): float
