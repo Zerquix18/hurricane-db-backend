@@ -226,9 +226,9 @@ class HurdatParser
         return false;
       }
 
-      $valid_hours = collect([0, 6, 12, 18]);
+      $valid_hours = [0, 6, 12, 18];
       $hour = (int) date('G', $position['timestamp']);
-      return $valid_hours->has($hour);
+      return in_array($hour, $valid_hours);
     })->reduce(function ($ace, $current) {
       $wind_speed = $current['wind_speed'] ** 2;
       return $ace + $wind_speed;
