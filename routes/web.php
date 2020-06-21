@@ -41,9 +41,9 @@ Route::prefix('ranking')->group(function () {
     Route::get('top_by_damage', 'RankingController@topByFatalities');
     Route::get('top_by_month', 'RankingController@topByMonth');
     Route::get('top_by_season', 'RankingController@topBySeason');
-    Route::get('top_by_fastest_movement', 'RankingController@fastestMovement');
     Route::get('top_by_largest_path', 'RankingController@topByLargestPath');
     Route::get('top_by_landfalls', 'RankingController@topByLandfalls');
+    Route::get('top_by_ace', 'RankingController@topByACE');
     Route::get('earliest_formation_by_category', 'RankingController@earlierFormationByCategory');
     Route::get('latest_formation_by_category', 'RankingController@latestFormationByCategory');
 });

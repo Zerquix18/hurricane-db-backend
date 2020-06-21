@@ -4,41 +4,47 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Cache;
+use App\Hurricane;
 use Lib\HurricaneRecord;
 
 class RankingController extends Controller
 {
     const CACHE_TIME = 60 * 60 * 24 * 7; // 1 week
+    const LIMIT = 10;
 
     public function topByLowestPressure()
     {
-        $hurricanes = Cache::remember('top_by_lowest_pressure', self::CACHE_TIME, function () {
-            return HurricaneRecord::topByLowestPressure();
-        });
+        $hurricanes = Hurricane::whereNotNull('lowest_pressure')
+                              ->orderBy('lowest_pressure', 'asc')
+                              ->limit(10)
+                              ->get();
         return $hurricanes;
     }
 
     public function topByHighestWindSpeed()
     {
-        $hurricanes = Cache::remember('top_by_highest_windspeed', self::CACHE_TIME, function () {
-            return HurricaneRecord::topByHighestWindSpeed();
-        });
+        $hurricanes = Hurricane::whereNotNull('highest_windspeed')
+                              ->orderBy('highest_windspeed', 'desc')
+                              ->limit(10)
+                              ->get();
         return $hurricanes;
     }
 
     public function topByFatalities()
     {
-        $hurricanes = Cache::remember('top_by_fatalities', self::CACHE_TIME, function () {
-            return HurricaneRecord::topByFatalities();
-        });
+        $hurricanes = Hurricane::whereNotNull('max_range_fatalities')
+                              ->orderBy('max_range_fatalities', 'desc')
+                              ->limit(10)
+                              ->get();
         return $hurricanes;
     }
 
     public function topByDamage()
     {
-        $hurricanes = Cache::remember('top_by_damage', self::CACHE_TIME, function () {
-            return HurricaneRecord::topByDamage();
-        });
+        $hurricanes = Hurricane::whereNotNull('max_range_damage')
+                              ->orderBy('max_range_damage', 'desc')
+                              ->limit(10)
+                              ->get();
         return $hurricanes;
     }
 
@@ -52,33 +58,41 @@ class RankingController extends Controller
 
     public function topBySeason()
     {
-        $hurricanes = Cache::remember('top_by_season', self::CACHE_TIME, function () {
-            return HurricaneRecord::topBySeason();
-        });
-        return $hurricanes;
-    }
-
-    public function fastestMovement()
-    {
-        $hurricanes = Cache::remember('top_by_fastest_movement', self::CACHE_TIME, function () {
-            return HurricaneRecord::fastestMovement();
-        });
+        $hurricanes = Hurricane::selectRaw('season, COUNT(*) AS total')
+                               ->groupBy('season')
+                               ->orderBy('total', 'desc')
+                               ->limit(10)
+                               ->get();
         return $hurricanes;
     }
 
     public function topByLargestPath()
     {
-        $hurricanes = Cache::remember('top_by_largest_path', self::CACHE_TIME, function () {
-            return HurricaneRecord::topByLargestPath();
-        });
+        $hurricanes = Hurricane::whereNotNull('distance_traveled')
+                              ->orderBy('distance_traveled', 'desc')
+                              ->limit(10)
+                              ->get();
         return $hurricanes;
     }
 
     public function topByLandfalls()
     {
-        $hurricanes = Cache::remember('top_by_landfalls', self::CACHE_TIME, function () {
-            return HurricaneRecord::topByLandfalls();
-        });
+        $hurricanes = Hurricane::join('hurricane_positions', 'hurricanes.id', '=', 'hurricane_positions.hurricane_id')
+                               ->selectRaw('hurricanes.*, COUNT(hurricane_positions.hurricane_id) AS landfalls')
+                               ->where('hurricane_positions.event_type', '=', 'L')
+                               ->groupBy('hurricanes.id')
+                               ->orderBy('landfalls', 'DESC')
+                               ->limit($limit)
+                               ->get();
+        return $hurricanes;
+    }
+
+    public function topByACE()
+    {
+        $hurricanes = Hurricane::whereNotNull('ace')
+                              ->orderBy('ace', 'desc')
+                              ->limit(10)
+                              ->get();
         return $hurricanes;
     }
 

@@ -70,7 +70,7 @@ class WikipediaParser
         $wikipedia_page_name = sprintf("%d_%s_hurricane_season", $season, $basin);
         if ($season === 2005) {
             // ONLY EXCEPTION. WASN'T THIS A GREAT YEAR -_- 
-            $wikipedia_page_name = "List_of_storms_in_the_2005_Atlantic_hurricane_season";
+            $wikipedia_page_name = "2005_Atlantic_hurricane_season";
         }
         $wikipedia_url = sprintf(
             "https://en.wikipedia.org/api/rest_v1/page/mobile-sections/%s",
