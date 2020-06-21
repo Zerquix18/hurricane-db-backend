@@ -17,17 +17,17 @@ Route::get('/', function () {
 
 
 
-Route::get('/basin/{basin}/', 'HurricaneController@getBasin')->where('basin', '[a-z]+');
+Route::get('/basin/{basin}/', 'HurricaneController@getBasin')->where('basin', '[a-zA-Z]+');
 
 Route::get('/basin/{basin}/season/{season}', 'HurricaneController@getSeason')->where([
-    'basin' => '[a-z]+',
+    'basin' => '[a-zA-Z]+',
     'season' => '[0-9]+',
 ]);
 
 Route::get('/basin/{basin}/season/{season}/hurricane/{hurricane}', 'HurricaneController@getHurricane')->where([
     'basin' => '[a-z]+',
     'season' => '[0-9]+',
-    'hurricane' => '[a-z]+',
+    'hurricane' => '[a-zA-Z]+',
 ]);
 
 Route::get('/positions/{id}', 'HurricaneController@getPositions');
