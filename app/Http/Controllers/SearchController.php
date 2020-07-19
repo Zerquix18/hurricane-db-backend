@@ -220,8 +220,35 @@ class SearchController extends Controller
             $query = $query->orderBy('formed', 'desc');
         }
 
-        $hurricanes = $query->get();
+        $systems = $query->with(['positions', 'pressures', 'windSpeeds'])->limit(20)->get();
 
-        return $hurricanes;
+        $systems = $systems->map(function ($system) {
+            $system->positions = $system->positions->map(function ($position) {
+                unset($position['hurricane_id']);
+                unset($position['created_at']);
+                unset($position['updated_at']);
+                unset($position['source']);
+    
+                if ($position->windSpeeds->count() > 0) {
+                    $position->wind_speed = $position->windSpeeds[0]->measurement;
+                } else {
+                    $position->wind_speed = null;
+                }
+                unset($position->windSpeeds);
+    
+                if ($position->pressures->count() > 0) {
+                    $position->pressure = $position->pressures[0]->measurement;
+                } else {
+                    $position->pressure = null;
+                }
+                unset($position->pressures);
+    
+                return $position;
+            });
+
+            return $system;
+        });
+
+        return $systems;
     }
 }
