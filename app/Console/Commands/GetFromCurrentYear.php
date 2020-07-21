@@ -3,28 +3,27 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-
-use Lib\HurdatParser;
+use Lib\CurrentYearParser;
 use App\Hurricane;
 use App\HurricanePosition;
 use App\HurricaneWindSpeed;
 use App\HurricanePressure;
 
-class FetchFromHurdat extends Command
+class GetFromCurrentYear extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'fetch_from_hurdat {database}';
+    protected $signature = 'get_from_current_year';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Fetch from the hurricane database';
+    protected $description = 'Get the hurricanes from the current year, which are not in the HURDAT yet.';
 
     /**
      * Create a new command instance.
@@ -43,10 +42,10 @@ class FetchFromHurdat extends Command
      */
     public function handle()
     {
-        $link = $this->argument('database');
-        $analysis = new HurdatParser($link);
+        $current_year = new CurrentYearParser('atlantic');
+
         $this->info('Fetching...');
-        $data = $analysis->getData();
+        $data = $current_year->getData();
 
         $this->output->progressStart(count($data));
 
@@ -58,30 +57,30 @@ class FetchFromHurdat extends Command
         $this->output->progressFinish();
     }
 
-    private function handleHurricane(array $hurricane_data): void
+    private function handleHurricane(array $hurricane_data)
     {
         $name = $hurricane_data['name'];
-        if ($name === 'Unnamed') {
-            $name = $this->translateName($hurricane_data['number']);
-        }
-
         $basin = $hurricane_data['basin'];
         $season = $hurricane_data['season'];
 
         $this->info("Inserting {$name} ({$season})...");
-        
-        $formed = new \DateTime();
-        $dissipated = new \DateTime();
 
+        $formed = new \DateTime();
         $formed->setTimestamp($hurricane_data['events'][0]['timestamp']);
-        $dissipated->setTimestamp($hurricane_data['events'][count($hurricane_data['events']) - 1]['timestamp']);
+
+        if ($hurricane_data['ended']) {
+            $dissipated = new \DateTime();
+            $dissipated->setTimestamp($hurricane_data['events'][count($hurricane_data['events']) - 1]['timestamp']);
+        } else {
+            $dissipated = null;
+        }
         
         $min_range_fatalities = null;
         $max_range_fatalities = null;
         $min_range_damage = null;
         $max_range_damage = null;
 
-        $sources = $this->argument('database');
+        $sources = 'http://nhc.noaa.gov/archive/';
 
         $lowest_pressure = $hurricane_data['lowest_pressure'];
         $highest_pressure = $hurricane_data['highest_pressure'];
@@ -159,42 +158,4 @@ class FetchFromHurdat extends Command
             }
         }
     }
-
-    private function translateName(int $number): string
-    {
-        $numbers = [
-            'One',
-            'Two',
-            'Three',
-            'Four',
-            'Five',
-            'Six',
-            'Seven',
-            'Eight',
-            'Nine',
-            'Ten',
-            'Eleven',
-            'Twelve',
-            'Thirtheen',
-            'Fourteen',
-            'Fifteen',
-            'Seventeen',
-            'Eighteen',
-            'Nineteen',
-            'Twenty',
-            'Twenty One',
-            'Twenty Two',
-            'Twenty Three',
-            'Twenty Four',
-            'Twenty Five',
-            'Twenty Six',
-            'Twenty Seven',
-        ];
-
-        $number--;
-        if (! key_exists($number, $numbers)) {
-            return 'Unnamed'; // :(
-        }
-        return $numbers[$number];
-    }   
 }
