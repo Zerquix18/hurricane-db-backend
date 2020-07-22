@@ -180,10 +180,10 @@ class CurrentYearParser
     $latitude = (float) trim($lat_str, 'NSWE');
     $longitude = (float) trim($lng_str, 'NSWE');
 
-    if (strpos($lat_str, 'N') !== false || strpos($lat_str, 'S') !== false) {
+    if (strpos($lat_str, 'S') !== false) {
       $latitude = -$latitude;
     }
-    if (strpos($lat_str, 'W') !== false || strpos($lat_str, 'E') !== false) {
+    if (strpos($lng_str, 'W') !== false) {
       $longitude = -$longitude;
     }
 
